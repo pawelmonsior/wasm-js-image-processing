@@ -16,7 +16,7 @@ fn make_gauss_kernel(sigma: f64) -> Vec<f64> {
     let mut sum = 0.0;
 
     let mut kernel = Vec::with_capacity(dim);
-    let half = kernel.len() / 2;
+    let half = dim / 2;
 
     for j in 0..dim {
         let i = j as isize - half as isize;
@@ -33,16 +33,18 @@ fn make_gauss_kernel(sigma: f64) -> Vec<f64> {
 
 fn gauss_internal(data: &mut [u8], w: usize, h: usize, kernel: &[f64], ch: usize) {
     let mut buff = vec![0u8; w * h];
-    let mk = f64::floor((kernel.len() / 2) as f64);
+    let mk = (kernel.len() / 2) as isize;
     let kl = kernel.len();
     let mut hw = 0;
-    let mut offset = 0;
 
     for j in 0..h {
         for i in 0..w {
             let mut sum = 0.0;
             for k in 0..kl {
-                let col = cmp::max(0, cmp::min(i as usize + (k -mk as usize), w as usize - 1)) as usize;
+                let col = match (i as isize).checked_add(k as isize - mk) {
+                    Some(result) => cmp::max(0, cmp::min(result as usize, w - 1)),
+                    None => 0,
+                };
                 sum += f64::from(data[(hw + col) * 4 + ch]) * kernel[k];
             }
             buff[hw + i] = sum as u8;
@@ -54,12 +56,14 @@ fn gauss_internal(data: &mut [u8], w: usize, h: usize, kernel: &[f64], ch: usize
         for i in 0..w {
             let mut sum = 0.0;
             for k in 0..kl {
-                let row = cmp::max(0, cmp::min(j as usize + (k -mk as usize), h as usize - 1)) as usize;
+                let row = match (j as isize).checked_add(k as isize - mk) {
+                    Some(result) => cmp::max(0, cmp::min(result as usize, h - 1)),
+                    None => 0,
+                };
                 sum += f64::from(buff[row * w + i]) * kernel[k];
             }
             let off = (j * w + i) * 4;
             data[off + ch] = sum as u8;
         }
-        offset += w;
     }
 }
