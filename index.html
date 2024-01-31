@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello Wasm!</title>
+    <script type="module" src="script.js"></script>
+    <link rel="stylesheet" href="./static/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-identity">
+        <h1><a href="#">Image processing</a></h1>
+      </div>  
+      <nav class="site-navigation">
+        <ul class="nav">
+          <li>
+            <label for="imgInput">Choose an image from your drive:</label>
+            <input type="file" id="imgInput" name="imgInput" accept="image/png, image/jpeg" onchange="loadImage(this);" />
+          </li> 
+        </ul>
+      </nav>
+    </header>
+
+    <div class="sidenav">
+      <div id="js" style="padding-top: 15px;">
+        <span style="padding-left: 10px;">JavaScript</span>
+        <a onclick="jsGrayScale()">Grayscale</a>
+        <a onclick="jsSobel()">Sobel filter</a>
+        <a onclick="jsGaussian()">Gaussian blur</a>
+      </div>
+      <div id="wasm" style="padding-top: 15px;">
+        <span style="padding-left: 10px;">WebAssembly</span>
+        <a onclick="wasmGreyScale()">Grayscale</a>
+        <a onclick="wasmSobel()">Sobel</a>
+        <a onclick="wasmBlur()">Gaussian blur</a>
+      </div>
+    </div>
+    <div style="justify-content: center; display: flex;">
+      <div style="margin-top: 15px;">
+        <h1 style="text-align: center;" id="operationTime"></h1>
+        <canvas id="canvas1" ></canvas>
+      </div>
+    </div>
+  
+
+  </body>
+</html>
