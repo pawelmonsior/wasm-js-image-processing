@@ -41,10 +41,7 @@ fn gauss_internal(data: &mut [u8], w: usize, h: usize, kernel: &[f64], ch: usize
         for i in 0..w {
             let mut sum = 0.0;
             for k in 0..kl {
-                let col = match (i as isize).checked_add(k as isize - mk) {
-                    Some(result) => cmp::max(0, cmp::min(result as usize, w - 1)),
-                    None => 0,
-                };
+                let col = (i as isize + k as isize - mk).max(0).min(w as isize - 1) as usize;
                 sum += f64::from(data[(hw + col) * 4 + ch]) * kernel[k];
             }
             buff[hw + i] = sum as u8;
@@ -56,10 +53,7 @@ fn gauss_internal(data: &mut [u8], w: usize, h: usize, kernel: &[f64], ch: usize
         for i in 0..w {
             let mut sum = 0.0;
             for k in 0..kl {
-                let row = match (j as isize).checked_add(k as isize - mk) {
-                    Some(result) => cmp::max(0, cmp::min(result as usize, h - 1)),
-                    None => 0,
-                };
+                let row = (j as isize + k as isize - mk).max(0).min(h as isize - 1) as usize;
                 sum += f64::from(buff[row * w + i]) * kernel[k];
             }
             let off = (j * w + i) * 4;
